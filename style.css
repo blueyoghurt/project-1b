@@ -1,5 +1,16 @@
+body {
+  text-align: center;
+}
+
 #status {
 
   font-size: 20px;
   color: red;
+}
+
+
+#canvas-container {
+  height: 484px;
+  width: 516px;
+  margin: 0 auto;
 }
