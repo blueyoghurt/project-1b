@@ -1,9 +1,10 @@
 body {
   text-align: center;
+  background-color: goldenrod;
+  font-family: 'Open Sans', sans-serif;
 }
 
 #status {
-
   font-size: 20px;
   color: red;
 }
