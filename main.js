@@ -115,21 +115,12 @@ document.addEventListener('DOMContentLoaded',function(){
     ////////////////////
     // Border Control //
     ///////////////////
+    if (hero.x <= 0) { hero.x = 0; }
+    if (hero.y <= 0) { hero.y = 0; }
+    if (hero.x > 480) { hero.x = 480; }
+    if (hero.y > 448) { hero.y = 448; }
 
-    if (hero.x <= 0) {
-      hero.x = 0;
-    }
-    if (hero.y <= 0) {
-      hero.y = 0;
-    }
-    if (hero.x > 480) {
-      hero.x = 480;
-    }
-    if (hero.y > 448) {
-      hero.y = 448;
-    }
   }; //update function
-
 
   // Draw everything
   var render = function () {
@@ -146,8 +137,8 @@ document.addEventListener('DOMContentLoaded',function(){
     }
 
     // Score
-    ctx.fillStyle = "rgb(250, 250, 250)";
-    ctx.font = "24px Helvetica";
+    ctx.fillStyle = "rgb(250, 250, 0)";
+    ctx.font = "24px 'Open Sans'";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText("Monsters caught: " + monstersCaught, 32, 32);
@@ -157,6 +148,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var main = function () {
     var now = Date.now();
     var delta = now - then;
+    console.log("Delta is",delta);
 
     update(delta / 1000);
     render();
