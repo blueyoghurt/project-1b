@@ -13,17 +13,24 @@
 </head>
 <body>
   <h1>Rattlesnake</h1><br>
-
-  <p id="status">
-
-  </p>
   <div id="canvas-container">
+      <div id="startmenu">
+        <button type="button" id="start">Start</button>
+      </div>
+      <div id="restartmenu">
+        <button type="button" id="restart">Game Over</button>
+      </div>
   </div>
-  <p id="heroposition">
-  </p>
-  <audio id="gameover">
-    <source src="sound/Game_over.mp3" type="audio/mp3">
-  </audio>
-    <script src="snake.js"></script>
-  </body>
-  </html>
+
+  <div class="score">
+    <span id="keepScore"><span>
+    </div>
+    <div class="score">
+      <span id="keepLevel"></span>
+    </div>
+    <audio id="gameover">
+      <source src="sound/Game_over.mp3" type="audio/mp3">
+      </audio>
+      <script src="snake.js"></script>
+    </body>
+    </html>

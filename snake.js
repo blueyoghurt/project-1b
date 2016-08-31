@@ -1,5 +1,5 @@
-// The Rattlesnake Game //
-// By Luke        //
+///////  Snake ///////
+//     By Luke     ///
 // Inspired by http://thecodeplayer.com/walkthrough/html5-game-tutorial-make-a-snake-game-using-html5-canvas-jquery //
 
 $(document).ready(function(){
@@ -18,16 +18,19 @@ $(document).ready(function(){
   var food = {};
   var score;
   var levelModifier=1;
-  var gameovermusic = document.getElementById('gameover');
+  var gameovermusic = document.getElementById('menu');
+
+  //Wait for player's prompt to start game
+  document.getElementById('start').addEventListener('click',function(){
+    document.getElementById('startmenu').style.zIndex = "-1";
+    init();
+  });
+
 
   // Create the Rattlesnake in an array
   var snake = [];
-  var tail;
-  // paintBackground();
 
   function init (){
-    console.log('in the init function');
-
     var fps = 1000/20; //20 Frame per seconds?
 
     direction = "right" //default direction
@@ -45,10 +48,11 @@ $(document).ready(function(){
       if (e.keyCode === 38 && preventDirection != "up"){ direction = "up"; }
       if (e.keyCode === 39 && preventDirection != "right"){ direction = "right"; }
       if (e.keyCode === 40 && preventDirection != "down"){ direction = "down"; }
+      if (e.keyCode === 76) {console.log('enter pressed');clearInterval(game_loop);}
+      if (e.keyCode === 77) {console.log('spacebar pressed');setInterval(moveSnake,fps);}
     });
 
   } // init function
-  init();
 
   function createSnake(){
     length = 5;
@@ -59,6 +63,7 @@ $(document).ready(function(){
     paintSnake();
   }
 
+  // Paint the snake as well as repaint the background to prevent the trail.
   function paintSnake(){
     paintBackground();
     paintFood();
@@ -66,7 +71,6 @@ $(document).ready(function(){
     for (i = 0;  i< snake.length; i++){
       ctx.fillRect(snake[i].x,snake[i].y,cellWidth,cellWidth);
     }
-    tail = snake.length - 1;
   }
 
   function createFood(){
@@ -77,10 +81,6 @@ $(document).ready(function(){
         createFood();
       } // if food is on the snake, respawn it.
     }
-    // food = {
-    //   x: Math.floor(Math.random() * (w-cellWidth+1)),
-    //   y: Math.floor (Math.random() * (h-cellWidth+1))
-    // }  // Defining food's x and y position prevents it from being accessed outside of this function. But how do i access it if i need to call it twice?
     paintFood()
   }
 
@@ -134,6 +134,7 @@ $(document).ready(function(){
   function checkFood(x,y){
     if (x === food.x & y === food.y){
       score += (1 * levelModifier);
+      document.getElementById('keepScore').textContent = "Score:" + score;
       console.log(score);
       return true;
     } else {
@@ -145,7 +146,6 @@ $(document).ready(function(){
     for (i = 0; i < array.length; i ++){
       if (array[i].x == x && array[i].y == y){
         console.log('Game Over');
-        console.log(gameovermusic);
         document.getElementById('gameover').play();
         return true;
       }

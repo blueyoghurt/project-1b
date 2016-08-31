@@ -1,6 +1,5 @@
 body {
   text-align: center;
-  /*background-color: goldenrod;*/
   font-family: 'Press Start 2P', cursive;
   background-image: url('http://www.magic4walls.com/wp-content/uploads/2014/03/snake-minimalist-art-funny-green-background-hd-wallpaper.jpg');
   background-size: cover;
@@ -11,10 +10,53 @@ body {
   color: red;
 }
 
-
 #canvas-container {
   height: 520px;
   width: 520px;
   margin: 0 auto;
   background-color: white;
+  position: relative;
+}
+
+
+#startmenu {
+  height: 520px;
+  width: 520px;
+  position: absolute;
+  text-align: center;
+  vertical-align: middle;
+  background-color: black;
+}
+
+#restartmenu {
+  height: 520px;
+  width: 520px;
+  position: absolute;
+  text-align: center;
+  vertical-align: middle;
+  background-color: black;
+  z-index: -1;
+}
+
+
+button {
+  background-color: transparent;
+  margin: 50px;auto;
+}
+
+#startmenu {
+
+}
+
+.score{
+  padding: 0 10%;
+  display: inline-block;
+}
+
+#keepScore {
+  text-align: left;
+}
+
+#keepLevel {
+  text-align: right:
 }
