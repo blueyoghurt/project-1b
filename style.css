@@ -30,7 +30,7 @@ body {
   background-color: rgba(10,10,10,0.9);
 }
 
-#announcement, #instruction {
+#announcement, #instruction, #announceScore{
   padding: 5%;
   font-size: 150%;
   color: white;

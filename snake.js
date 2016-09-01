@@ -14,24 +14,29 @@ $(document).ready(function(){
   var gameState = false;
   var pause = false;
   var gameOver = false;
-  var fps = 1000/20; //20 Frame per seconds?
-  var food = {};
   var score;
-  var levelModifier=1;
+  var stage = 1;
+  var fps = 1000/(10*stage); //Frame per seconds
+  var food = {};
   var menu = {  main: document.getElementById('menu'),
-                announcement: document.getElementById('announcement'),
-                button: document.getElementById('menubutton'),
-                instruction: document.getElementById('instruction')}
+  score: document.getElementById('announceScore'),
+  announcement: document.getElementById('announcement'),
+  button: document.getElementById('menubutton'),
+  instruction: document.getElementById('instruction')}
   var message = { startMessage: "Are you ready?",
-                  startButton: "Begin",
-                  startInstruction: "Press space to begin",
-                  pauseMessage: "Have a break, Have a Kit Kat.",
-                  pauseButton: "Resume",
-                  pauseInstruction: "Press space to resume",
-                  endMessage: "Awwwww",
-                  endButton: "Restart",
-                  endInstruction: "Press space to restart"}
+  startButton: "Begin",
+  startInstruction: "Press space to begin",
+  pauseMessage: "Have a break, Have a Kit Kat.",
+  pauseButton: "Resume",
+  pauseInstruction: "Press space to resume",
+  endMessage: "Better luck next time!",
+  endButton: "Restart",
+  endInstruction: "Press space to restart"}
   var music = { gameover: document.getElementById('gameover')}
+
+  function gameSpeed(){
+    return (1000/(10*stage));
+  }
 
   //Wait for player's prompt to start game
   menu.button.addEventListener('click',function(){
@@ -59,9 +64,8 @@ $(document).ready(function(){
     restart();
   }
 
-  // Create the Rattlesnake in an array
   var snake = [];
-  //init();
+
   function init (){
     menu.main.style.zIndex = "-1";
 
@@ -72,12 +76,14 @@ $(document).ready(function(){
     score = 0;
 
     if (typeof game_loop != "undefined") {clearInterval(game_loop);} // not sure what this is for
-    game_loop = setInterval(moveSnake, fps);
+    game_loop = setInterval(moveSnake, gameSpeed());
+    console.log(fps);
   } // init function
 
   function gPaused() {
     if (!pause){
       menu.main.style.zIndex = "1";
+      menu.score.textContent = ("Stage: "+ stage + "   " + " Score: " + score) ;
       menu.announcement.textContent = message.pauseMessage;
       menu.button.textContent = message.pauseButton;
       menu.instruction.textContent = message.pauseInstruction;
@@ -85,7 +91,7 @@ $(document).ready(function(){
       pause = true;
     } else {
       menu.main.style.zIndex = "-1";
-      game_loop = setInterval(moveSnake,fps);
+      game_loop = setInterval(moveSnake,gameSpeed());
       pause = false;
     }
   }
@@ -93,6 +99,7 @@ $(document).ready(function(){
   function restart (){
     gameOver = false;
     score = 0;
+    stage = 1;
     init();
   }
 
@@ -175,9 +182,10 @@ $(document).ready(function(){
 
   function checkFood(x,y){
     if (x === food.x & y === food.y){
-      score += (1 * levelModifier);
+      score += (1 * stage);
+      checkStage();
       document.getElementById('keepScore').textContent = "Score:" + score;
-      console.log(score);
+      document.getElementById('keepStage').textContent = "Stage:" + stage;
       return true;
     } else {
       return false;
@@ -197,11 +205,26 @@ $(document).ready(function(){
     gameOver = true;
     gameState = false;
     clearInterval (game_loop);
-    music.gameover.play();
+    document.getElementById('gameover').play();
     menu.main.style.zIndex = "1";
+    menu.score.textContent = ("Stage: "+ stage + "   " + " Score: " + score) ;
     menu.announcement.textContent = message.endMessage;
-    menu.instruction.textContent = message.endInstruction;
     menu.button.textContent = message.endButton;
+    menu.instruction.textContent = message.endInstruction;
+    document.getElementById('keepScore').textContent = "";
+    document.getElementById('keepStage').textContent = "";
+  }
+
+  function checkStage(){
+    if (score == 20 || score == 60 || score == 120 || score == 200 || score == 300 || score == 420 || score == 560 ){
+      stage++;
+      clearInterval(game_loop);
+      game_loop = setInterval(moveSnake,gameSpeed());
+    }
+  }
+
+  function setObstacles(){
+
   }
 
   function paintBackground () {
