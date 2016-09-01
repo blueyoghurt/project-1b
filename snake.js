@@ -1,7 +1,3 @@
-///////  Snake ///////
-//     By Luke     ///
-// Inspired by http://thecodeplayer.com/walkthrough/html5-game-tutorial-make-a-snake-game-using-html5-canvas-jquery //
-
 $(document).ready(function(){
   console.log('DOMContentLoaded');
 
@@ -15,23 +11,59 @@ $(document).ready(function(){
   //define the variables used in the game
   var cellWidth = 20;
   var direction, preventDirection;
+  var gameState = false;
+  var pause = false;
+  var gameOver = false;
+  var fps = 1000/20; //20 Frame per seconds?
   var food = {};
   var score;
   var levelModifier=1;
-  var gameovermusic = document.getElementById('menu');
+  var menu = {  main: document.getElementById('menu'),
+                announcement: document.getElementById('announcement'),
+                button: document.getElementById('menubutton'),
+                instruction: document.getElementById('instruction')}
+  var message = { startMessage: "Are you ready?",
+                  startButton: "Begin",
+                  startInstruction: "Press space to begin",
+                  pauseMessage: "Have a break, Have a Kit Kat.",
+                  pauseButton: "Resume",
+                  pauseInstruction: "Press space to resume",
+                  endMessage: "Awwwww",
+                  endButton: "Restart",
+                  endInstruction: "Press space to restart"}
+  var music = { gameover: document.getElementById('gameover')}
 
   //Wait for player's prompt to start game
-  document.getElementById('start').addEventListener('click',function(){
-    document.getElementById('startmenu').style.zIndex = "-1";
-    init();
+  menu.button.addEventListener('click',function(){
+    checkStatus();
   });
 
+  // listen to keyboard events. only set this up once!
+  document.addEventListener('keydown',function(e){
+    e.preventDefault()
+    if (e.keyCode === 37 && preventDirection != "left"){ direction = "left"; }
+    if (e.keyCode === 38 && preventDirection != "up"){ direction = "up"; }
+    if (e.keyCode === 39 && preventDirection != "right"){ direction = "right"; }
+    if (e.keyCode === 40 && preventDirection != "down"){ direction = "down"; }
+    if (e.keyCode === 32) {checkStatus();}
+  });
+
+  function checkStatus() {
+    if (!gameState) {
+      init ();
+      gameState = true;
+    }else if (gameState){
+      gPaused();
+    }
+    if (gameOver)
+    restart();
+  }
 
   // Create the Rattlesnake in an array
   var snake = [];
-
+  //init();
   function init (){
-    var fps = 1000/20; //20 Frame per seconds?
+    menu.main.style.zIndex = "-1";
 
     direction = "right" //default direction
 
@@ -41,20 +73,31 @@ $(document).ready(function(){
 
     if (typeof game_loop != "undefined") {clearInterval(game_loop);} // not sure what this is for
     game_loop = setInterval(moveSnake, fps);
-
-    // listen to keyboard events. only set this up once!
-    document.addEventListener('keydown',function(e){
-      if (e.keyCode === 37 && preventDirection != "left"){ direction = "left"; }
-      if (e.keyCode === 38 && preventDirection != "up"){ direction = "up"; }
-      if (e.keyCode === 39 && preventDirection != "right"){ direction = "right"; }
-      if (e.keyCode === 40 && preventDirection != "down"){ direction = "down"; }
-      if (e.keyCode === 76) {console.log('enter pressed');clearInterval(game_loop);}
-      if (e.keyCode === 77) {console.log('spacebar pressed');setInterval(moveSnake,fps);}
-    });
-
   } // init function
 
+  function gPaused() {
+    if (!pause){
+      menu.main.style.zIndex = "1";
+      menu.announcement.textContent = message.pauseMessage;
+      menu.button.textContent = message.pauseButton;
+      menu.instruction.textContent = message.pauseInstruction;
+      clearInterval(game_loop);
+      pause = true;
+    } else {
+      menu.main.style.zIndex = "-1";
+      game_loop = setInterval(moveSnake,fps);
+      pause = false;
+    }
+  }
+
+  function restart (){
+    gameOver = false;
+    score = 0;
+    init();
+  }
+
   function createSnake(){
+    snake =[];
     length = 5;
     for (i = 0; i < length ; i++ ){
       snake.push({x:i*cellWidth, y:0*cellWidth});
@@ -118,8 +161,7 @@ $(document).ready(function(){
     if (hx == w) {hx = 0} ;
     if (hy == h) {hy = 0} ;
 
-    if (checkCollision(hx,hy,snake))
-    { clearInterval (game_loop);}
+    checkCollision(hx,hy,snake);
 
     if (!checkFood(hx,hy)){
       snake.pop(); //remove the last one and add
@@ -145,11 +187,21 @@ $(document).ready(function(){
   function checkCollision(x,y,array){
     for (i = 0; i < array.length; i ++){
       if (array[i].x == x && array[i].y == y){
-        console.log('Game Over');
-        document.getElementById('gameover').play();
+        isGameOver();
         return true;
       }
     } return false;
+  }
+
+  function isGameOver() {
+    gameOver = true;
+    gameState = false;
+    clearInterval (game_loop);
+    music.gameover.play();
+    menu.main.style.zIndex = "1";
+    menu.announcement.textContent = message.endMessage;
+    menu.instruction.textContent = message.endInstruction;
+    menu.button.textContent = message.endButton;
   }
 
   function paintBackground () {

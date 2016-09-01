@@ -14,38 +14,32 @@ body {
   height: 520px;
   width: 520px;
   margin: 0 auto;
+  color: white;
   background-color: white;
   position: relative;
 }
 
-
-#startmenu {
+#menu {
   height: 520px;
   width: 520px;
+  top: 0;
+  left: 0;
   position: absolute;
   text-align: center;
   vertical-align: middle;
-  background-color: black;
+  background-color: rgba(10,10,10,0.9);
 }
 
-#restartmenu {
-  height: 520px;
-  width: 520px;
-  position: absolute;
-  text-align: center;
-  vertical-align: middle;
-  background-color: black;
-  z-index: -1;
+#announcement, #instruction {
+  padding: 5%;
+  font-size: 150%;
+  color: white;
 }
-
 
 button {
   background-color: transparent;
+  font-size: 120%;
   margin: 50px;auto;
-}
-
-#startmenu {
-
 }
 
 .score{
