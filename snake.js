@@ -9,7 +9,7 @@ $(document).ready(function(){
   document.getElementById('canvas-container').appendChild(canvas);
 
   //define the variables used in the game
-  var cellWidth = 10;
+  var cellWidth = 20;
   var direction, preventDirection;
   var gameState = false;
   var pause = false;
@@ -223,7 +223,7 @@ $(document).ready(function(){
   }
 
   function checkStage(){
-    if (score == 20 || score == 60 || score == 120 || score == 200 || score == 300 || score == 420 || score == 560 ){
+    if (score == 2 || score == 4 || score == 7 || score == 11 || score == 16 || score == 22 || score == 29 ){
       stage++;
       clearInterval(game_loop);
       game_loop = setInterval(moveSnake,gameSpeed());
