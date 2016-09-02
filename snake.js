@@ -9,14 +9,13 @@ $(document).ready(function(){
   document.getElementById('canvas-container').appendChild(canvas);
 
   //define the variables used in the game
-  var cellWidth = 20;
+  var cellWidth = 10;
   var direction, preventDirection;
   var gameState = false;
   var pause = false;
   var gameOver = false;
   var score;
   var stage = 1;
-  var fps = 1000/(10*stage); //Frame per seconds
   var food = {};
   var menu = {  main: document.getElementById('menu'),
   score: document.getElementById('announceScore'),
@@ -32,7 +31,9 @@ $(document).ready(function(){
   endMessage: "Better luck next time!",
   endButton: "Restart",
   endInstruction: "Press space to restart"}
-  var music = { gameover: document.getElementById('gameover')}
+  var music = { gameover: document.getElementById('gameover'),
+                food: document.getElementById('food'),
+                loop: document.getElementById('loop')}
 
   function gameSpeed(){
     return (1000/(10*stage));
@@ -55,7 +56,7 @@ $(document).ready(function(){
 
   function checkStatus() {
     if (!gameState) {
-      init ();
+      init();
       gameState = true;
     }else if (gameState){
       gPaused();
@@ -65,19 +66,23 @@ $(document).ready(function(){
   }
 
   var snake = [];
+  var obstacle =[];
 
   function init (){
     menu.main.style.zIndex = "-1";
+    music.loop.play()
+    music.loop.loop = true;
 
     direction = "right" //default direction
 
     createSnake();
     createFood();
     score = 0;
+    document.getElementById('keepScore').textContent = "Score:" + score;
+    document.getElementById('keepStage').textContent = "Stage:" + stage;
 
     if (typeof game_loop != "undefined") {clearInterval(game_loop);} // not sure what this is for
     game_loop = setInterval(moveSnake, gameSpeed());
-    console.log(fps);
   } // init function
 
   function gPaused() {
@@ -186,6 +191,7 @@ $(document).ready(function(){
       checkStage();
       document.getElementById('keepScore').textContent = "Score:" + score;
       document.getElementById('keepStage').textContent = "Stage:" + stage;
+      music.food.play();
       return true;
     } else {
       return false;
@@ -205,7 +211,8 @@ $(document).ready(function(){
     gameOver = true;
     gameState = false;
     clearInterval (game_loop);
-    document.getElementById('gameover').play();
+    music.loop.pause();
+    music.gameover.play();
     menu.main.style.zIndex = "1";
     menu.score.textContent = ("Stage: "+ stage + "   " + " Score: " + score) ;
     menu.announcement.textContent = message.endMessage;
@@ -223,9 +230,24 @@ $(document).ready(function(){
     }
   }
 
-  function setObstacles(){
-
-  }
+// setObstacles();
+//   function setObstacles(){
+//     var obslength = 5;
+//     var obs = Math.random();
+//     if (obs>0.5){
+//       var x = Math.floor(Math.random() * ((w-((obslength-1)*cellWidth))/cellWidth))*cellWidth;
+//       for (i = 0;  i < obslength; i++){
+//         obstacle.push({x:x*cellWidth, y:0*cellWidth});
+//         console.log(obstacle);
+//       }
+//     } else {
+//       var y = Math.floor(Math.random() * ((h-((obslength-1)*cellWidth))/cellWidth))*cellWidth;
+//       for (i = 0;  i < obslength; i++){
+//         obstacle.push({x:0*cellWidth, y:y*cellWidth});
+//         console.log(obstacle);
+//       }
+//     }
+//   }
 
   function paintBackground () {
     ctx.fillStyle = "white"
