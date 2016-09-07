@@ -9,7 +9,7 @@ $(document).ready(function(){
   document.getElementById('canvas-container').appendChild(canvas);
 
   //define the variables used in the game
-  var cellWidth = 10;
+  var cellWidth = 20;
   var direction, preventDirection;
   var gameState = false;
   var pause = false;
@@ -112,7 +112,7 @@ $(document).ready(function(){
 
   function createSnake(){
     snake =[];
-    length = 5;
+    length = 10;
     for (i = 0; i < length ; i++ ){
       snake.push({x:i*cellWidth, y:0*cellWidth});
     }
@@ -184,6 +184,8 @@ $(document).ready(function(){
       snake.unshift({x: hx, y: hy});
       createFood();
     }
+
+
     paintSnake();
   } // moveSnake
 
