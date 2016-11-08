@@ -19,7 +19,7 @@ body {
   position: relative;
 }
 
-#menu {
+#menu, #highScoreBoard {
   height: 520px;
   width: 520px;
   top: 0;
@@ -30,7 +30,32 @@ body {
   background-color: rgba(10,10,10,0.9);
 }
 
-#announcement, #instruction, #announceScore{
+#highScoreBoard {
+  display: none
+}
+
+#menu input {
+  background-color: transparent;
+  text-align: center;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  font-size: 24px;
+}
+
+#menu input:focus {
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  outline: 0;
+  font-size: 24px;
+}
+
+#inputHighScore {
+  display: none;
+}
+
+#announcement, #instruction, #announceScore, #scoreBoardTitle{
   padding: 5%;
   font-size: 150%;
   color: white;

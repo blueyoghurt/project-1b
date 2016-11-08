@@ -32,27 +32,31 @@ $(document).ready(function(){
   endButton: "Restart",
   endInstruction: "Press space to restart"}
   var music = { gameover: document.getElementById('gameover'),
-                food: document.getElementById('food'),
-                loop: document.getElementById('loop')}
+  food: document.getElementById('food'),
+  loop: document.getElementById('loop')}
 
   function gameSpeed(){
     return (1000/(10*stage));
   }
 
-  //Wait for player's prompt to start game
-  menu.button.addEventListener('click',function(){
-    checkStatus();
-  });
+  function listenForKeys(){
+    $(document).off('keydown'); // clear previous keydown events
+    // listen to keyboard events. only set this up once!
+    $(document).on('keydown', function(e){
+      e.preventDefault();
+      if (e.keyCode === 37 && preventDirection != "left"){ direction = "left"; }
+      if (e.keyCode === 38 && preventDirection != "up"){ direction = "up"; }
+      if (e.keyCode === 39 && preventDirection != "right"){ direction = "right"; }
+      if (e.keyCode === 40 && preventDirection != "down"){ direction = "down"; }
+      if (e.keyCode === 32) {checkStatus();}
+    });
+    //Wait for player's prompt to start game
+    menu.button.addEventListener('click',function(){
+      checkStatus();
+    });
+  };
 
-  // listen to keyboard events. only set this up once!
-  document.addEventListener('keydown',function(e){
-    e.preventDefault()
-    if (e.keyCode === 37 && preventDirection != "left"){ direction = "left"; }
-    if (e.keyCode === 38 && preventDirection != "up"){ direction = "up"; }
-    if (e.keyCode === 39 && preventDirection != "right"){ direction = "right"; }
-    if (e.keyCode === 40 && preventDirection != "down"){ direction = "down"; }
-    if (e.keyCode === 32) {checkStatus();}
-  });
+  listenForKeys();
 
   function checkStatus() {
     if (!gameState) {
@@ -69,6 +73,9 @@ $(document).ready(function(){
   var obstacle =[];
 
   function init (){
+    $('#highScoreBoard').hide();
+    listenForKeys();
+    // $('#menu').hide();
     menu.main.style.zIndex = "-1";
     music.loop.play()
     music.loop.loop = true;
@@ -87,6 +94,7 @@ $(document).ready(function(){
 
   function gPaused() {
     if (!pause){
+      // $('#menu').show();
       menu.main.style.zIndex = "1";
       menu.score.textContent = ("Stage: "+ stage + "   " + " Score: " + score) ;
       menu.announcement.textContent = message.pauseMessage;
@@ -96,6 +104,7 @@ $(document).ready(function(){
       clearInterval(game_loop);
       pause = true;
     } else {
+      // $('#menu').hide();
       menu.main.style.zIndex = "-1";
       music.loop.play();
       game_loop = setInterval(moveSnake,gameSpeed());
@@ -135,7 +144,7 @@ $(document).ready(function(){
     food.y = Math.floor(Math.random() * ((h/cellWidth)))*cellWidth;
     for (i = 0 ; i < snake.length; i++){
       if (food.x === snake[i].x && food.y === snake[i].y){
-        createFood();
+        return createFood();
       } // if food is on the snake, respawn it.
     }
     paintFood()
@@ -185,7 +194,6 @@ $(document).ready(function(){
       createFood();
     }
 
-
     paintSnake();
   } // moveSnake
 
@@ -212,11 +220,25 @@ $(document).ready(function(){
   }
 
   function isGameOver() {
+    $("#inputHighScore").show();
+    $("#inputScore").focus();
+    $(document).off('keydown');
+    $(document).on('keydown',function(e){
+      if (e.keyCode == 13){
+        $('#inputScore').val('');
+        menu.main.style.zIndex = "-1";
+        // $('#menu').hide();
+        $('#highScoreBoard').show();
+        $("#inputHighScore").hide();
+        checkStatus();
+      }
+    })
     gameOver = true;
     gameState = false;
     clearInterval (game_loop);
     music.loop.pause();
     music.gameover.play();
+    // $('#menu').show();
     menu.main.style.zIndex = "1";
     menu.score.textContent = ("Stage: "+ stage + "   " + " Score: " + score) ;
     menu.announcement.textContent = message.endMessage;
@@ -234,27 +256,28 @@ $(document).ready(function(){
     }
   }
 
-// setObstacles();
-//   function setObstacles(){
-//     var obslength = 5;
-//     var obs = Math.random();
-//     if (obs>0.5){
-//       var x = Math.floor(Math.random() * ((w-((obslength-1)*cellWidth))/cellWidth))*cellWidth;
-//       for (i = 0;  i < obslength; i++){
-//         obstacle.push({x:x*cellWidth, y:0*cellWidth});
-//         console.log(obstacle);
-//       }
-//     } else {
-//       var y = Math.floor(Math.random() * ((h-((obslength-1)*cellWidth))/cellWidth))*cellWidth;
-//       for (i = 0;  i < obslength; i++){
-//         obstacle.push({x:0*cellWidth, y:y*cellWidth});
-//         console.log(obstacle);
-//       }
-//     }
-//   }
+  // setObstacles();
+  //   function setObstacles(){
+  //     var obslength = 5;
+  //     var obs = Math.random();
+  //     if (obs>0.5){
+  //       var x = Math.floor(Math.random() * ((w-((obslength-1)*cellWidth))/cellWidth))*cellWidth;
+  //       for (i = 0;  i < obslength; i++){
+  //         obstacle.push({x:x*cellWidth, y:0*cellWidth});
+  //         console.log(obstacle);
+  //       }
+  //     } else {
+  //       var y = Math.floor(Math.random() * ((h-((obslength-1)*cellWidth))/cellWidth))*cellWidth;
+  //       for (i = 0;  i < obslength; i++){
+  //         obstacle.push({x:0*cellWidth, y:y*cellWidth});
+  //         console.log(obstacle);
+  //       }
+  //     }
+  //   }
 
   function paintBackground () {
     ctx.fillStyle = "white"
     ctx.fillRect(0,0,w,h);
   }
+
 }); // DOMContentLoaded
