@@ -1,6 +1,12 @@
 $(document).ready(function(){
   console.log('DOMContentLoaded');
 
+  // HighScore information
+  var dbRef = new Firebase('https://snake-7406a.firebaseio.com/');
+  var highScoresRef = dbRef.child('highscores');
+  var minHighScore;
+  var highScoresArray = [];
+
   // Creating the canvas
   var canvas  = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
@@ -9,7 +15,7 @@ $(document).ready(function(){
   document.getElementById('canvas-container').appendChild(canvas);
 
   //define the variables used in the game
-  var cellWidth = 20;
+  var cellWidth = 10;
   var direction, preventDirection;
   var gameState = false;
   var pause = false;
@@ -36,12 +42,14 @@ $(document).ready(function(){
   loop: document.getElementById('loop')}
 
   function gameSpeed(){
-    return (1000/(10*stage));
+    return (1000/(10*0.8*stage));
   }
+
+  listenForKeys();
+  findHighScore();
 
   function listenForKeys(){
     $(document).off('keydown'); // clear previous keydown events
-    // listen to keyboard events. only set this up once!
     $(document).on('keydown', function(e){
       e.preventDefault();
       if (e.keyCode === 37 && preventDirection != "left"){ direction = "left"; }
@@ -56,8 +64,6 @@ $(document).ready(function(){
     });
   };
 
-  listenForKeys();
-
   function checkStatus() {
     if (!gameState) {
       init();
@@ -70,7 +76,7 @@ $(document).ready(function(){
   }
 
   var snake = [];
-  var obstacle =[];
+  // var obstacle =[];
 
   function init (){
     $('#highScoreBoard').hide();
@@ -94,7 +100,6 @@ $(document).ready(function(){
 
   function gPaused() {
     if (!pause){
-      // $('#menu').show();
       menu.main.style.zIndex = "1";
       menu.score.textContent = ("Stage: "+ stage + "   " + " Score: " + score) ;
       menu.announcement.textContent = message.pauseMessage;
@@ -104,7 +109,6 @@ $(document).ready(function(){
       clearInterval(game_loop);
       pause = true;
     } else {
-      // $('#menu').hide();
       menu.main.style.zIndex = "-1";
       music.loop.play();
       game_loop = setInterval(moveSnake,gameSpeed());
@@ -220,32 +224,82 @@ $(document).ready(function(){
   }
 
   function isGameOver() {
-    $("#inputHighScore").show();
-    $("#inputScore").focus();
     $(document).off('keydown');
-    $(document).on('keydown',function(e){
-      if (e.keyCode == 13){
-        $('#inputScore').val('');
-        menu.main.style.zIndex = "-1";
-        // $('#menu').hide();
-        $('#highScoreBoard').show();
-        $("#inputHighScore").hide();
-        checkStatus();
-      }
-    })
+    gameOverStuff();
+    if (score > minHighScore){
+      highScoreStuff();
+    }
+  }
+
+  function gameOverStuff(){
     gameOver = true;
     gameState = false;
     clearInterval (game_loop);
     music.loop.pause();
     music.gameover.play();
-    // $('#menu').show();
+
     menu.main.style.zIndex = "1";
     menu.score.textContent = ("Stage: "+ stage + "   " + " Score: " + score) ;
     menu.announcement.textContent = message.endMessage;
     menu.button.textContent = message.endButton;
     menu.instruction.textContent = message.endInstruction;
+
     document.getElementById('keepScore').textContent = "";
     document.getElementById('keepStage').textContent = "";
+
+    $(document).on('keydown',function(e){
+      if (e.keyCode === 32){
+        menu.main.style.zIndex = "-1";
+        showHighScore();
+      }
+    });
+
+  }
+
+  function highScoreStuff(){
+    $("#inputHighScore").show();
+    $("#inputName").focus();
+    $(document).on('keydown',function(e){
+      if (e.keyCode == 13){
+        highScoresRef.push({
+          name: $('#inputName').val(),
+          score: score
+        });
+        $('#inputName').val('');
+        menu.main.style.zIndex = "-1";
+        $("#inputHighScore").hide();
+        showHighScore();
+        findHighScore();
+      }
+    });
+  }
+
+  function showHighScore() {
+    $('#highScoreBoard').show();
+    $('#highScoreBoard').empty();
+
+    $('#highScoreBoard').append('<p id="scoreBoardTitle">High Scores</p>')
+    var table = $('<table>');
+    console.log(highScoresArray.length);
+    for (i=0; i<highScoresArray.length; i++ ){
+      $(table).append(
+        '<tr>'+
+        '<td>' + highScoresArray[i].name + '</td>' +
+        '<td>' + highScoresArray[i].score + '</td>' +
+        '</tr>'
+      )
+    }
+
+    $('#highScoreBoard').append(table).append('</br>')
+    $('#highScoreBoard').append(($('<p>')).text('Press space to continue...'));
+
+    $(document).on('keydown',function(e){
+      if (e.keyCode === 32){
+        menu.main.style.zIndex = "-1";
+        $('#highScoreBoard').hide();
+        checkStatus();
+      }
+    });
   }
 
   function checkStage(){
@@ -280,4 +334,17 @@ $(document).ready(function(){
     ctx.fillRect(0,0,w,h);
   }
 
+  function findHighScore(){
+    highScoresArray =[];
+    return highScoresRef.orderByChild('score').limitToLast(8).once('value', function(snapshot) {
+      snapshot.forEach(function(snapshot){
+        highScoresArray.push(snapshot.val());
+      });
+      minHighScore = highScoresArray[0].score
+      highScoresArray.reverse();
+      console.log(highScoresArray, minHighScore,highScoresArray.length);
+    });
+  }
+
 }); // DOMContentLoaded
+//

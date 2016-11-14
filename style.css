@@ -79,3 +79,12 @@ button {
 #keepLevel {
   text-align: right:
 }
+
+table {
+  margin: 0 auto;
+  font-size: 125%
+}
+
+td {
+  padding: 4px 50px 4px 50px;
+}
