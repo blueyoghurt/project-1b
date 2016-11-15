@@ -268,8 +268,8 @@ $(document).ready(function(){
         $('#inputName').val('');
         menu.main.style.zIndex = "-1";
         $("#inputHighScore").hide();
-        showHighScore();
         findHighScore();
+        setTimeout(showHighScore,2000);
       }
     });
   }
